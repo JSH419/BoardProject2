@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">		
+
+<mapper namespace="mapper">
+	
+	<resultMap type="map" id="rsMap">
+		<result column="seq" property="seq"/>
+		<result column="mem_name" property="name"/>
+		<result column="mem_id" property="id"/>
+		<result column="board_subject" property="subject"/>
+		<result column="board_content" property="content"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="upt_date" property="uptDate"/>
+		<result column="view_cnt" property="viewCnt"/>
+	</resultMap>
+	
+	<!-- 게시판 리스트, 검색
+	<select id="list" resultMap="rsMap">
+		select
+			seq
+			, mem_name
+			, mem_id
+			, board_subject
+			, board_content
+			, reg_date
+			, upt_date
+			, view_cnt
+			, useyn
+		from board_study
+		where 1=1
+		<choose>
+			<when test="searchType == 'name'">
+				and mem_name like '%'||#{keyword}||'%'
+			</when>
+			<when test="searchType == 'subject'">
+				and board_subject like '%'||#{keyword}||'%'
+			</when>
+			<when test="searchType == 'content'">
+				and board_subject like '%'||#{keyword}||'%'
+				or board_content like '%'||#{keyword}||'%'
+			</when>
+		</choose>
+		<if test="stDate != null and stDate != ''">
+			and to_char(reg_date, 'yyyy-MM-dd') between #{stDate} and #{endDate}
+		</if>
+		order by seq desc
+	</select> -->
+	
+<select id="list" resultMap="rsMap">
+			select rnum
+			    ,SEQ
+			    ,MEM_NAME
+			    ,MEM_ID
+			    ,BOARD_SUBJECT
+			    ,BOARD_CONTENT
+			    ,REG_DATE 
+			    ,UPT_DATE
+			    ,VIEW_CNT
+			from (
+            select
+                row_number() over(order by seq desc) rnum
+                ,SEQ
+                ,MEM_NAME
+                ,MEM_ID
+                ,BOARD_SUBJECT
+                ,BOARD_CONTENT
+                ,REG_DATE 
+                ,UPT_DATE
+                ,VIEW_CNT
+            from board_study
+            where 1=1
+            <choose>
+                <when test="searchType == 'name'">
+                    and mem_name like '%' || #{keyword} || '%'
+                </when>
+                <when test="searchType == 'subject'">
+                    and BOARD_SUBJECT like '%' || #{keyword} || '%'
+                </when>
+                <when test="searchType == 'content'">
+                     and (BOARD_SUBJECT like '%' || #{keyword} || '%' or BOARD_CONTENT like '%' || #{keyword} || '%')
+                </when>
+            </choose>
+            <if test="stDate != null and stDate != ''">
+                and to_char(reg_date, 'yyyy-MM-dd') between #{stDate} and #{endDate}
+            </if> 
+            ) where rnum between ${pageBegin} and ${pageEnd}
+</select>
+	
+<select id="pageMap" parameterType="map" resultType="integer">
+    select count(seq)
+    from board_study
+    where 1=1
+    <choose>
+        <when test="searchType == 'name'">
+            and mem_name like '%' || #{keyword} || '%'
+        </when>
+        <when test="searchType == 'subject'">
+            and BOARD_SUBJECT like '%' || #{keyword} || '%'
+        </when>
+        <when test="searchType == 'content'">
+            and (BOARD_SUBJECT like '%' || #{keyword} || '%' or BOARD_CONTENT like '%' || #{keyword} || '%')
+        </when>
+    </choose>
+    <if test="stDate != null and stDate != ''">
+        and to_char(reg_date, 'yyyy-MM-dd') between #{stDate} and #{stDate}
+    </if>
+</select>	
+
+	<!-- 글 등록하기 -->
+	<insert id = "insert" parameterType="map">
+		insert into board_study
+		(
+			seq
+			,mem_name
+			,mem_id
+			,board_subject
+			,board_content
+			,reg_date
+			,view_cnt
+			,useyn
+		)values(
+			( select nvl(max(seq), 0)+1 from board_study)
+			,#{name}
+			,#{id}
+			,#{subject}
+			,#{content}
+			,sysdate
+			,0
+			,'y'
+		)
+	</insert>
+	
+	<!-- 글 상세보기 -->
+	<select id="detail" resultMap="rsMap" parameterType="int">
+		select
+			seq 
+			, mem_name
+			, mem_id
+			, board_subject
+			, board_content
+			, reg_date
+			, upt_date
+			,view_cnt
+			, useyn
+		from board_study
+		where seq = #{seq}
+	</select>
+	
+	<!-- 글 수정하기 -->
+	<update id="update" parameterType="com.com.board.BoardDto">
+		UPDATE 
+			board_study
+	   	SET
+	   		MEM_NAME = #{name},
+	   		MEM_ID = #{id},
+	        BOARD_SUBJECT = #{subject},
+	        BOARD_CONTENT = #{content},
+	        UPT_DATE = sysdate
+	    WHERE SEQ = #{seq}
+	</update>
+	
+	<!-- 글 삭제하기 -->
+	<delete id="delete" parameterType="int">
+		delete from board_study
+		where seq in (
+			<foreach collection="array" separator="," item="aa">
+				#{aa}
+			</foreach>
+		)
+	</delete>
+	
+	
+</mapper>
