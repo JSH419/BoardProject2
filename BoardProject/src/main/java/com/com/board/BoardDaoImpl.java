@@ -23,7 +23,7 @@ public class BoardDaoImpl implements BoardDao{
 	@Override
 	public int pageMap(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return sqlSession.selectOne("mapper.pageMap", paramMap);
+		return sqlSession.selectOne("mapper.total", paramMap);
 	}
 	
 	@Override

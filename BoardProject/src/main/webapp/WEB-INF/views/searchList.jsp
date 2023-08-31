@@ -2,75 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<script  src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script>
-	$(function(){
-		
-		$("#searchType").val('${paramMap.searchType}');
-		$("#keyword").val('${paramMap.keyword}');
-		
-		$("#searchBtn").click(function(){
-			
-			//$("#searchFrm").attr("action","list").attr("method","post").submit();
- 			$.ajax({
- 				url : "searchList",
- 				data : $("#searchFrm").serialize(),
-				type : "post",
-				
- 				success : function(search){
-					
- 					console.log(search);
- 					$("#listFrm").html(search);
- 				},
- 				error: function(xhr, status, error) {
-			        // 에러 시 처리
-			        console.error('에러 발생:', status, error);
-			        // xhr.status에는 HTTP 상태 코드가 포함되어 있음
-			        console.log('HTTP 상태 코드:', xhr.status);
-			        // xhr.responseText에는 서버로부터 받은 응답 데이터 또는 에러 메시지가 포함되어 있음
-			        console.log('에러 응답:', xhr.responseText);
-			    }			
- 			})
-		})		
-		$("#delBtn").click(function(){
-			$("#listFrm").attr("action","delete").attr("method","post").submit();
-			
-		})
-	})
-	
-	function list(num){
-		$("#pageNo").val(num);
-		$("#searchBtn").click();
-	}
-</script>
-</head>
-<body>
-<form name = "searchFrm" id = "searchFrm">
-	<input type = "hidden" name = "pageNo" id = "pageNo" value = "1">
-	<input type = "hidden" name = "listSize" id = "listSize" value = "10">
-		
-	<div>
-		<select name = "searchType" id = "searchType">
-			<option value = "sel" >선택</option>
-			<option value = "name">작성자</option>
-			<option value = "subject">제목</option>
-			<option value = "content">제목+내용</option>
-		</select>
-		<input type = "text" name = "keyword" id = "keyword">
-		<input type = "button" name = "searchBtn" id = "searchBtn" value = "검색"><br>
-		<input type = "date" name = "stDate" id = "stDate"> ~ <input type = "date" name = "endDate" id = "endDate">
-	</div>
-</form>
-<div>
-	<input type = "button" name = "writeBtn" id = "writeBtn" value = "글쓰기" onclick = "location.href='write'">
-	<input type = "button" name = "delBtn" id = "delBtn" value = "삭제">
-</div>
-<form name = "listFrm" id = "listFrm">
+
 <table border = "1">
 			<thead>
 				<tr>	
@@ -95,8 +27,7 @@
 						<td>${boardList.viewCnt }</td>
 					</tr>
 				</c:forEach>
-				
-			<tr>
+				<tr>
 	            <td colspan="7">
 	                <!-- **처음페이지로 이동 : 현재 페이지가 1보다 크면  [처음]하이퍼링크를 화면에 출력-->
 	                <c:if test="${pageVO.curBlock > 1}">
@@ -132,8 +63,5 @@
 	                </c:if>
 	            </td>
         </tr>
-	</tbody>
-</table>
-</form>
-</body>
-</html>
+			</tbody>
+	</table>

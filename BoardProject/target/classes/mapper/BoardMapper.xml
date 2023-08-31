@@ -15,98 +15,57 @@
 		<result column="upt_date" property="uptDate"/>
 		<result column="view_cnt" property="viewCnt"/>
 	</resultMap>
+
+<sql id="searchSql">
+	<choose>
+		<when test="searchType == 'name'">
+			and mem_name like '%'||#{keyword}||'%'
+		</when>
+		<when test="searchType == 'subject'">
+			and board_subject like '%'||#{keyword}||'%'
+		</when>
+		<when test="searchType == 'content'">
+			and board_subject like '%'||#{keyword}||'%'
+			or board_content like '%'||#{keyword}||'%'
+		</when>
+	</choose>
+</sql>
+
+<select id="list" resultMap="rsMap">
 	
-	<!-- 게시판 리스트, 검색
-	<select id="list" resultMap="rsMap">
+	select
+		seq
+		, mem_name
+		, mem_id
+		, board_subject
+		, board_content
+		, reg_date
+		, upt_date
+		,view_cnt
+	from (
+	
 		select
-			seq
+			row_number() over(order by seq desc) rnum
+			,seq
 			, mem_name
 			, mem_id
 			, board_subject
 			, board_content
 			, reg_date
 			, upt_date
-			, view_cnt
+			,view_cnt
 			, useyn
 		from board_study
 		where 1=1
-		<choose>
-			<when test="searchType == 'name'">
-				and mem_name like '%'||#{keyword}||'%'
-			</when>
-			<when test="searchType == 'subject'">
-				and board_subject like '%'||#{keyword}||'%'
-			</when>
-			<when test="searchType == 'content'">
-				and board_subject like '%'||#{keyword}||'%'
-				or board_content like '%'||#{keyword}||'%'
-			</when>
-		</choose>
-		<if test="stDate != null and stDate != ''">
-			and to_char(reg_date, 'yyyy-MM-dd') between #{stDate} and #{endDate}
-		</if>
-		order by seq desc
-	</select> -->
-	
-<select id="list" resultMap="rsMap">
-			select rnum
-			    ,SEQ
-			    ,MEM_NAME
-			    ,MEM_ID
-			    ,BOARD_SUBJECT
-			    ,BOARD_CONTENT
-			    ,REG_DATE 
-			    ,UPT_DATE
-			    ,VIEW_CNT
-			from (
-            select
-                row_number() over(order by seq desc) rnum
-                ,SEQ
-                ,MEM_NAME
-                ,MEM_ID
-                ,BOARD_SUBJECT
-                ,BOARD_CONTENT
-                ,REG_DATE 
-                ,UPT_DATE
-                ,VIEW_CNT
-            from board_study
-            where 1=1
-            <choose>
-                <when test="searchType == 'name'">
-                    and mem_name like '%' || #{keyword} || '%'
-                </when>
-                <when test="searchType == 'subject'">
-                    and BOARD_SUBJECT like '%' || #{keyword} || '%'
-                </when>
-                <when test="searchType == 'content'">
-                     and (BOARD_SUBJECT like '%' || #{keyword} || '%' or BOARD_CONTENT like '%' || #{keyword} || '%')
-                </when>
-            </choose>
-            <if test="stDate != null and stDate != ''">
-                and to_char(reg_date, 'yyyy-MM-dd') between #{stDate} and #{endDate}
-            </if> 
-            ) where rnum between ${pageBegin} and ${pageEnd}
+		<include refid="searchSql"></include>
+		)where rnum between (#{pageNo}-1) * #{listSize} + 1 and #{pageNo} * #{listSize}
 </select>
-	
-<select id="pageMap" parameterType="map" resultType="integer">
-    select count(seq)
-    from board_study
-    where 1=1
-    <choose>
-        <when test="searchType == 'name'">
-            and mem_name like '%' || #{keyword} || '%'
-        </when>
-        <when test="searchType == 'subject'">
-            and BOARD_SUBJECT like '%' || #{keyword} || '%'
-        </when>
-        <when test="searchType == 'content'">
-            and (BOARD_SUBJECT like '%' || #{keyword} || '%' or BOARD_CONTENT like '%' || #{keyword} || '%')
-        </when>
-    </choose>
-    <if test="stDate != null and stDate != ''">
-        and to_char(reg_date, 'yyyy-MM-dd') between #{stDate} and #{stDate}
-    </if>
-</select>	
+
+<select id="total" parameterType="map" resultType="int">
+	select count(seq) from board_study
+	where 1=1
+	<include refid="searchSql"></include>
+</select>
 
 	<!-- 글 등록하기 -->
 	<insert id = "insert" parameterType="map">
