@@ -18,6 +18,7 @@
     		<li id="logo">Board</li>
     		<li><a href="<c:url value='/' />">Home</a></li>
     		<li><a href="<c:url value='/list' />">Board</a></li>
+    		<!-- <li><a href="<c:url value='/upload' />">uploadForm</a></li> -->
     	</ul>
     </div>
     <div style="text-align: center;">

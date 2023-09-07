@@ -47,7 +47,7 @@ public class BoardPage {
     }
     
     
-    // Getter/Setter
+    // Getter, Setter
     public int getCurPage() {
         return curPage;
     }

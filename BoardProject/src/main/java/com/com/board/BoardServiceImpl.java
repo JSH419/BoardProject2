@@ -1,6 +1,5 @@
 package com.com.board;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -40,5 +39,17 @@ public class BoardServiceImpl implements BoardService{
 	public int update(BoardDto boardDto) {
 		// TODO Auto-generated method stub
 		return dao.update(boardDto);
+	}
+
+	@Override
+	public int fileinsert(Map<String, Object> fileMap) {
+		// TODO Auto-generated method stub
+		return dao.fileinsert(fileMap);
+	}
+
+	@Override
+	public int selectSeq(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return dao.selectSeq(paramMap);
 	}
 }

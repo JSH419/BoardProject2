@@ -9,4 +9,6 @@ public interface BoardService {
 	int insert(Map<String, Object> map);
 	int delete(int seq);
 	int update(BoardDto boardDto);
+	int fileinsert(Map<String, Object> fileMap);
+	int selectSeq(Map<String, Object> paramMap);
 }

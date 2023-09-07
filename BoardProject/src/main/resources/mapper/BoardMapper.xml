@@ -14,6 +14,11 @@
 		<result column="reg_date" property="regDate"/>
 		<result column="upt_date" property="uptDate"/>
 		<result column="view_cnt" property="viewCnt"/>
+		<result column="file_seq" property="fileSeq"/>
+		<result column="real_name" property="realName"/>
+		<result column="save_name" property="saveName"/>
+		<result column="save_path" property="SAVE_PATH"/>
+		<result column="list_seq" property="listseq"/>
 	</resultMap>
 
 <sql id="searchSql">
@@ -43,7 +48,6 @@
 		, upt_date
 		,view_cnt
 	from (
-	
 		select
 			row_number() over(order by seq desc) rnum
 			,seq
@@ -62,11 +66,24 @@
 </select>
 
 <select id="total" parameterType="map" resultType="int">
-	select count(seq) from board_study
+	select count(seq) 
+	from board_study
 	where 1=1
 	<include refid="searchSql"></include>
 </select>
 
+	<!-- 게시판 seq 가져오기 -->
+	<select id="listSeq" resultType="int">
+	 select nvl(max(seq), 0)+1 
+	 from board_study
+	</select>
+	
+	<!-- 이미지 게시판 fileSeq 가져오기 -->
+	<select id="fileSeq" resultType="int">
+	 select nvl(max(file_seq), 0)+1 
+	 from file_study_table
+	</select>
+	
 	<!-- 글 등록하기 -->
 	<insert id = "insert" parameterType="map">
 		insert into board_study
@@ -80,7 +97,7 @@
 			,view_cnt
 			,useyn
 		)values(
-			( select nvl(max(seq), 0)+1 from board_study)
+			#{seq}
 			,#{name}
 			,#{id}
 			,#{subject}
@@ -90,6 +107,28 @@
 			,'y'
 		)
 	</insert>
+	
+	<!-- 이미지 등록 -->
+	<insert id="fileinsert" parameterType="map">
+	   insert into file_study_table
+	   (
+	       file_seq
+	       ,real_name
+	       ,save_name
+	       ,save_path
+	       ,reg_date
+	       ,list_seq
+	   )values( 
+	       #{fileSeq}
+	       ,#{realName}
+	       ,#{saveName}
+	       ,#{SAVE_PATH}
+	       ,sysdate
+	       ,#{listSeq} 
+	   )
+	</insert>
+	
+	
 	
 	<!-- 글 상세보기 -->
 	<select id="detail" resultMap="rsMap" parameterType="int">
@@ -129,6 +168,4 @@
 			</foreach>
 		)
 	</delete>
-	
-	
 </mapper>
