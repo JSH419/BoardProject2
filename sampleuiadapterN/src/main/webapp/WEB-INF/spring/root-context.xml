@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  https://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+  <!-- MSSQL 작업 시 dataSource로 호출 -->
+  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+    <property name="url" value="jdbc:oracle:thin:@121.140.42.227:1521:XE" />
+    <property name="username" value="giantstudy" />
+    <property name="password" value="gs123" />
+  </bean>
+
+  <!-- MSSQL 연동 시 필요한 mybatis 설정과 mapper 경로 설정 -->
+  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSource" />
+    <property name="configLocation"  value="classpath:/mybatis-config.xml" />
+    <property name="mapperLocations" value="classpath*:/mappers/*Mapper.xml" />
+  </bean>
+
+  <!-- sqlSessionFactory의 id를 가진 Mybatis쿼리문을 수행해주는 역할  -->
+  <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+    <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+
+</beans>
