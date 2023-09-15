@@ -11,4 +11,6 @@ public interface BoardService {
 	int update(BoardDto boardDto);
 	int fileinsert(Map<String, Object> fileMap);
 	int selectSeq(Map<String, Object> paramMap);
+	List<Map<String, Object>> selectFileList(int listSeq);
+	Map<String, Object> selectFileInfo(Map<String, Object> map);
 }

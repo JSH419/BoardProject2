@@ -55,4 +55,16 @@ public class BoardDaoImpl implements BoardDao{
 		// TODO Auto-generated method stub
 		return sqlSession.selectOne("mapper.selectSeq", paramMap);
 	}
+
+	@Override
+	public List<Map<String, Object>> selectFileList(int listSeq) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("mapper.selectFileList", listSeq);
+	}
+
+	@Override
+	public Map<String, Object> selectFileInfo(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("mapper.selectFileInfo", map);
+	}
 }

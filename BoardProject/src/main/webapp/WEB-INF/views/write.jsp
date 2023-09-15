@@ -65,6 +65,13 @@
 	        reader.readAsDataURL(file[0]);
 	    }
 	}
+//onclick함수와 input hidden 태그 사용해서 다운로드 실행 
+function fn_fileDown(fileSeq){
+	var formObj = $("form[name='frm']");
+	$("#fileSeq").attr("value", fileSeq);
+	formObj.attr("action", "/board/fileDown");
+	formObj.submit();
+}
 </script>
 <style>
    	 body {
@@ -79,6 +86,7 @@
 <body>
 	<form name = "frm" id = "frm" enctype="multipart/form-data"> 
 		<input type = "hidden" name = "seq" id = "seq" value = "${detail.seq}"><br>
+		<input type = "hidden" name = "fileSeq" id = "fileSeq" value = ""><br>
 		작성자 : <input type = "text" name = "name" id = "name" value = "${detail.name}"><br> 
 		아이디 : <input type = "text" name = "id" id = "id" value = "${detail.id}"><br>
 		제목 : <input type = "text" name = "subject" id = "subject" value = "${detail.subject}"><br>
@@ -94,9 +102,17 @@
 			
 		</c:if>
 		<c:if test="${not empty detail }">
+			<div id = "fileDv">
+				<input type = "button" name = "fileAdd" id = "fileAdd" value = "파일추가"><br>
+			</div>
 			<input type = "button" name = "uptBtn" id = "uptBtn" value = "수정">
-		</c:if>
+		</c:if><br>
+		<span>첨부 파일</span>
+		<div class="form-group" style="border: 1px solid #dbdbdb;">
+			<c:forEach var="file" items="${file}">
+				<a href="#" onclick="fn_fileDown('${file.FILE_SEQ}'); return false;">${file.REAL_NAME}</a><br>
+			</c:forEach>
+		</div>
 	</form>
-
 </body>
 </html>

@@ -57,7 +57,7 @@
 			, board_content
 			, reg_date
 			, upt_date
-			,view_cnt
+			, view_cnt
 			, useyn
 		from board_study
 		where 1=1
@@ -71,19 +71,6 @@
 	where 1=1
 	<include refid="searchSql"></include>
 </select>
-
-	<!-- 게시판 seq 가져오기 -->
-	<select id="listSeq" resultType="int">
-	 select nvl(max(seq), 0)+1 
-	 from board_study
-	</select>
-	
-	<!-- 이미지 게시판 fileSeq 가져오기 -->
-	<select id="fileSeq" resultType="int">
-	 select nvl(max(file_seq), 0)+1 
-	 from file_study_table
-	</select>
-	
 	<!-- 글 등록하기 -->
 	<insert id = "insert" parameterType="map">
 		insert into board_study
@@ -158,7 +145,7 @@
 	        UPT_DATE = sysdate
 	    WHERE SEQ = #{seq}
 	</update>
-	
+		
 	<!-- 글 삭제하기 -->
 	<delete id="delete" parameterType="int">
 		delete from board_study
@@ -168,4 +155,36 @@
 			</foreach>
 		)
 	</delete>
+	
+	<!-- 게시판 seq 가져오기 -->
+	<select id="listSeq" resultType="int">
+	 select nvl(max(seq), 0)+1 
+	 from board_study
+	</select>
+	
+	<!-- 이미지 게시판 fileSeq 가져오기 -->
+	<select id="fileSeq" resultType="int">
+	 select nvl(max(file_seq), 0)+1 
+	 from file_study_table
+	 order by file_seq
+	</select>
+	
+	<!-- 파일 조회 -->
+	<select id="selectFileList" parameterType="int" resultType="hashMap">
+		SELECT 
+			FILE_SEQ,
+			REAL_NAME,
+			SAVE_NAME
+		FROM file_study_table
+		WHERE LIST_SEQ = #{listSeq}
+	</select>
+	
+	<!-- 파일 정보 조회 -->
+	<select id="selectFileInfo" parameterType="hashMap" resultType="hashMap">
+		SELECT 
+			SAVE_NAME,
+			REAL_NAME
+		FROM file_study_table
+		WHERE FILE_SEQ = #{fileSeq}
+	</select> 
 </mapper>

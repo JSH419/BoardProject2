@@ -52,4 +52,17 @@ public class BoardServiceImpl implements BoardService{
 		// TODO Auto-generated method stub
 		return dao.selectSeq(paramMap);
 	}
+
+	@Override
+	public List<Map<String, Object>> selectFileList(int listSeq) {
+		// TODO Auto-generated method stub
+		return dao.selectFileList(listSeq);
+	}
+
+	@Override
+	public Map<String, Object> selectFileInfo(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return dao.selectFileInfo(map);
+	}
+	
 }

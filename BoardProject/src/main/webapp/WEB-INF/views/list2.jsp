@@ -41,6 +41,10 @@
 			$("#listFrm").attr("action","delete").attr("method","post").submit();
 			
 		})
+		
+		$("#exceldown").click(function(){
+			$("#listFrm").attr("action","exceldown").attr("method","post").submit();
+		})
 	})
 	
 	function list(num){
@@ -70,6 +74,7 @@
 <div>
 	<input type = "button" name = "writeBtn" id = "writeBtn" value = "글쓰기" onclick = "location.href='write'">
 	<input type = "button" name = "delBtn" id = "delBtn" value = "삭제">
+	<input type = "button" name = "exceldown" id = "exceldown" value = "엑셀다운로드"> 
 </div>
 <form name = "listFrm" id = "listFrm">
 <table border = "1">
